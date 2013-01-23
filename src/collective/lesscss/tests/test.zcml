@@ -1,11 +1,27 @@
 <configure xmlns="http://namespaces.zope.org/zope"
        xmlns:browser="http://namespaces.zope.org/browser"
        xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+       xmlns:plone="http://namespaces.plone.org/plone"
        xmlns:cmf="http://namespaces.zope.org/cmf"
        i18n_domain="collective.lesscss.tests">
 
+  <includeDependencies package="." />
+
   <cmf:registerDirectory
       name="testskin"
+      />
+
+  <adapter
+      name="bootstrap"
+      for="* zope.publisher.interfaces.IRequest"
+      provides="zope.traversing.interfaces.ITraversable"
+      factory=".traversal.ThemeTraverser"
+      />
+
+  <plone:static
+      directory="skins/testskin"
+      type="bootstrap"
+      name="less"
       />
 
   <includeOverrides file="overrides.zcml" package="collective.lesscss"/>

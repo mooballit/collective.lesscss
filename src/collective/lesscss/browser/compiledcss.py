@@ -1,4 +1,5 @@
 import os
+import tempfile
 import subprocess
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
@@ -8,6 +9,22 @@ from plone.memoize import ram
 import logging
 import re
 
+
+def path_diff( frompath, topath ):
+    '''
+        Returns the relative path to get from frompath to topath
+        ie. 
+        path_diff( '/home/user/some/dir', '/home/user/some_other/dir' )
+        returns '../../some_other/dir'
+    '''
+    frompath = frompath.split( os.sep )
+    topath = topath.split( os.sep )
+    
+    for i, pathi in enumerate( frompath ):
+        if pathi != topath[ i ]:
+            break
+    
+    return os.path.join( *( [ '..' ] * len( frompath[ i: ] ) + topath[ i: ] ) )
 
 def render_cachekey(method, self, lessc_command_line, resource_path, resource_file_name):
     """Cache by resource_path and resource_file_name"""
@@ -62,11 +79,29 @@ class compiledCSSView(BrowserView):
 
     @ram.cache(render_cachekey)
     def renderLESS(self, lessc_command_line, resource_path, resource_file_name):
-        self.logger.info("The resource %s has been server-side compiled." % resource_file_name)
+        # Allow use of ++[name]++ resource paths, e.g. ++theme++less/bootstrap.less
+        regex = r'@import\s+"(\+\+[\w_-]+\+\+[\w_-]+)\/([^"]*)";'
+        main_file = file( os.path.join( resource_path, resource_file_name ) ).read()
+
+        def expand_resource(match):
+            resource_directory_type, resource_file_name = match.groups()
+            respath = getUtility(IResourceDirectory, name = resource_directory_type).directory
+            return '@import "%s/%s";' % (path_diff(resource_path, respath), resource_file_name)
+
+        main_file = re.sub(regex, expand_resource, main_file)
+
+        self.logger.info("The resource %s has been server-side compiled (with expanded resource paths)." % resource_file_name)
+
+        tmp = tempfile.NamedTemporaryFile(dir = resource_path, delete = False)
+        tmp.write(main_file)
+        tmp.close()
 
         # Call the LESSC executable
-        process = subprocess.Popen([lessc_command_line, os.path.join(resource_path, resource_file_name)],
-                           stdout=subprocess.PIPE)
+        process = subprocess.Popen([lessc_command_line, tmp.name],
+                           stdout = subprocess.PIPE)
         output, errors = process.communicate()
+
+        os.remove(tmp.name)
+
         # Return the command output
         return output
