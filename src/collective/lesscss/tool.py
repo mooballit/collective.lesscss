@@ -42,20 +42,18 @@ class LESSRegistryTool(CSSRegistryTool):
         """Rendering methods for use in ZMI forms."""
         return ('link', )
 
-    # Overrides to set default Caching to False
+    # Overrides to set default Caching and Cooking to False
     def manage_addStylesheet(self, id, expression='', media='screen',
                              rel='stylesheet', title='', rendering='link',
-                             enabled=False, cookable=True, compression='safe',
+                             enabled=False, cookable=False, compression='safe',
                              cacheable=False, REQUEST=None,
                              conditionalcomment='', authenticated=False,
                              applyPrefix=False, bundle='default'):
-        """Register a stylesheet from a TTW request."""
-        self.registerStylesheet(id, expression, media, rel, title,
-                                rendering, enabled, cookable, compression,
-                                cacheable, conditionalcomment, authenticated,
-                                applyPrefix=applyPrefix, bundle=bundle)
-        if REQUEST:
-            REQUEST.RESPONSE.redirect(REQUEST['HTTP_REFERER'])
+
+        super(LESSRegistryTool, self).manage_addStylesheet(
+                id, expression, media, rel, title, rendering, enabled,
+                cookable, compression, cacheable, REQUEST, conditionalcomment,
+                authenticated, applyPrefix, bundle)
 
     def manage_saveStylesheets(self, REQUEST=None):
         """Save stylesheets from the ZMI.
@@ -92,30 +90,14 @@ class LESSRegistryTool(CSSRegistryTool):
 
     def registerStylesheet(self, id, expression='', media='screen',
                            rel='stylesheet', title='', rendering='link',
-                           enabled=1, cookable=True, compression='safe',
+                           enabled=1, cookable=False, compression='safe',
                            cacheable=False, conditionalcomment='',
                            authenticated=False, skipCooking=False,
                            applyPrefix=False, bundle='default'):
-        """Register a stylesheet."""
-        
-        if not id:
-            raise ValueError("id is required")
-        
-        stylesheet = self.resource_class(
-                                id,
-                                expression=expression,
-                                media=media,
-                                rel=rel,
-                                title=title,
-                                rendering=rendering,
-                                enabled=enabled,
-                                cookable=cookable,
-                                compression=compression,
-                                cacheable=cacheable,
-                                conditionalcomment=conditionalcomment,
-                                authenticated=authenticated,
-                                applyPrefix=applyPrefix,
-                                bundle=bundle)
-        self.storeResource(stylesheet, skipCooking=skipCooking)
+
+        super(LESSRegistryTool, self).registerStylesheet(
+                id, expression, media, rel, title, rendering, enabled,
+                cookable, compression, cacheable, conditionalcomment,
+                authenticated, applyPrefix, bundle)
 
 
