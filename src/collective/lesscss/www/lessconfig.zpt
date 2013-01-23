@@ -195,12 +195,9 @@ ul {
     performance impact, but it should not be an issue if resources get cached
     properly. It has no effect in debug mode.</p>
 
-    <p><strong>Warning!</strong><br> Please use care when using external
-    resources, as resources defined without SSL may cause an error to be
-    displayed in a user's browser if they are visiting your site using SSL.</p>
-    
-    <p><strong>Warning!</strong><br> Resources with caching will potentially
-    not be compiled when Development mode is disabled.</p>
+    <p>Please use care when using external resources, as resources defined
+    without SSL may cause an error to be displayed in a user's browser if they
+    are visiting your site using SSL.</p>
 
     <tal:stylesheets tal:define="portal python:here.portal_url.getPortalObject();"
                      tal:repeat="stylesheet here/getResources">
@@ -262,13 +259,13 @@ ul {
                    tal:attributes="checked stylesheet/getCookable | default;
                                    disabled stylesheet/isExternalResource | nothing" />
             <input type="hidden" name="stylesheets.cookable:records:boolean:default" value="False" />
--->
+
             <label>Caching allowed?</label>
             <input type="checkbox" name="stylesheets.cacheable:records:boolean"
                    tal:attributes="checked stylesheet/getCacheable | default;
                                    disabled stylesheet/isExternalResource | nothing" />
             <input type="hidden" name="stylesheets.cacheable:records:boolean:default" value="False" />
-
+-->
             <label title="This may be necessary when merging stylesheets that use relative URLs. It will not change the underlying stylesheet.">
                 Replace relative paths in <code>url()</code> statements with absolute paths?
             </label>
@@ -390,13 +387,13 @@ ul {
               <input type="checkbox" name="cookable:boolean" value="True" checked="1" />
               <input type="hidden" name="cookable:boolean:default" value="False" />
           </div>
--->
+
           <div>
               <label>Caching allowed?</label>
               <input type="checkbox" name="cacheable:boolean" value="True" checked="1" />
               <input type="hidden" name="cacheable:boolean:default" value="False" />
           </div>
-
+-->
           <div>
               <label title="This may be necessary when merging stylesheets that use relative URLs. It will not change the underlying stylesheet.">
                 Replace relative paths in <code>url()</code> statements with absolute paths?
