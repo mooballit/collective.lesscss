@@ -15,6 +15,7 @@ class LESSStyleSheet(Stylesheet):
     def getCookable(self):
         return self._data.get('cookable', False)
 
+
 class LESSRegistryTool(CSSRegistryTool):
     """A Plone registry for managing the linking to css files."""
     security = ClassSecurityInfo()
@@ -99,5 +100,3 @@ class LESSRegistryTool(CSSRegistryTool):
                 id, expression, media, rel, title, rendering, enabled,
                 cookable, compression, cacheable, conditionalcomment,
                 authenticated, applyPrefix, bundle)
-
-
